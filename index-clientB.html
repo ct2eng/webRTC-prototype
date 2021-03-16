@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.9/peer.min.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+	<span>請輸入訊息:</span>
+	<input type="text" id="input1"></input>
+	<button type="button" id="send">送出</button>
+	<p id='text'></p>
+
+
+    <video id="remoteVideo" autoplay playsinline></video>
+    <video id="remoteVideo2" autoplay playsinline></video>
+
+    
+    <script>
+        var peer = new Peer('B', { host: '172.20.10.3', port: 9000, path: '/api' });
+        // var conn = peer.connect('A');
+
+        // peer.on('open', function (id) {
+        //     console.log('My peer ID is: ' + id);
+        // });
+
+        // conn.on('data', (data) => {
+        //     $('#text').text(`${conn.peer} : ` + data);
+        // });
+		
+		// $('#send').on('click', function(){
+		// 	conn.send($('#input1').val());
+		// });
+
+        
+
+        navigator.mediaDevices.getUserMedia({
+		  audio: true,
+		  video: true
+		})
+		.then(function(stream) {
+            var call = peer.call('A', stream);
+            call.on('stream', function(stream2) {
+                console.log('stream: ', stream);
+                console.log('stream2: ', stream2);
+                document.querySelector('#remoteVideo').srcObject = stream;
+                document.querySelector('#remoteVideo2').srcObject = stream2;
+            });
+		  // 取得成功，stream 可以翻作流，可以當作取到的影像聲音
+		})
+		.catch(function(err) {
+		  // 取得失敗
+		  console.log(err)
+		  alert("找不到裝置");
+		});
+    </script>
+</body>
+
+</html>
